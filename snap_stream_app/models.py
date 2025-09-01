@@ -13,3 +13,8 @@ class User(models.Model):
         ADMIN = "Admin"
         
     role = models.CharField(choices=RoleOptions.choices, default=RoleOptions.USER)
+
+
+class FollowRelation(models.Model):
+    followed_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    following_user = models.ForeignKey(User, on_delete=models.CASCADE)
