@@ -9,8 +9,8 @@ class User(models.Model):
     profile_image_id = models.CharField()
     
     class RoleOptions(models.TextChoices):
-        USER = "User"
-        ADMIN = "Admin"
+        USER = "user", "User"
+        ADMIN = "admin", "Admin"
         
     role = models.CharField(choices=RoleOptions.choices, default=RoleOptions.USER)
 
@@ -18,3 +18,25 @@ class User(models.Model):
 class FollowRelation(models.Model):
     followed_user = models.ForeignKey(User, on_delete=models.CASCADE)
     following_user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Post(models.Model):
+    caption = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+
+class Comment(models.Model):
+    content = models.CharField
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+
+
+class Content(models.Model):
+    file = models.CharField()
+    order = models.IntegerField()
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
