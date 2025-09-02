@@ -4,7 +4,7 @@ from django.db import models
 class User(models.Model):
     username = models.CharField(max_length=80)
     password = models.CharField(max_length=255)
-    description = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=255, blank=True, null=True)
     profile_image = models.CharField(null=True)
     profile_image_id = models.CharField(null=True)
     
