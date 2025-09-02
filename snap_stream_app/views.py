@@ -57,3 +57,15 @@ class LoginView(APIView):
                 { "success": True, "message": "You are now logged in!" },
                 status=status.HTTP_200_OK,
             )
+
+
+class SignupView(APIView):
+    def post(self, request, format=None):
+        request.data["password"] = make_password(password=request.data["password"], salt=SALT)
+        serailzer = UserSerializer(data=request.data)
+        if serailzer.is_valid():
+            serailzer.save()
+            return Response(serailzer.data, status=201)
+        
+        return Response(serailzer.errors, status=400)
+        
