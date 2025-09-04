@@ -8,7 +8,8 @@ from .serializers import CustomTokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
 import os
 from rest_framework import status
-from cloudinary.templatetags import cloudinary
+import cloudinary
+import cloudinary.uploader
 from random import randint
 
 SALT=os.getenv("SALT")
@@ -32,38 +33,20 @@ class PostView(APIView):
         posts = Post.objects.all()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
-
-    def upload_image_cloudinary(self, request, image_name):
-        cloudinary.uploader.upload(
-            request.FILES['image'],
-            public_id=image_name,
-            crop='limit',
-            width='2000',
-            height='2000',
-            eager=[
-                {'width': 200, 'height': 200,
-                  'crop': 'thumb', 'gravity ': 'auto',
-                  'radius': 20, 'effect': 'sepia'},
-                {'width': 100, 'height': 150,
-                 'crop': 'fit', 'format ': 'png'}
-            ],
-            tags=['image_ad', 'NAPI']
-        )
     
+    # This code was mostly taken from the internet but it was changed to fit my model
     def post(self, request):
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                imageName = '{0}_v{1}'.format(request.FILES['file'].name.split('.')[0], randint(0, 100))
-                self.upload_image_cloudinary(request, imageName)
-                serializer.save(image_ad=imageName)
+        file = request.FILES.get('file')
+        if file:
+            upload_result = cloudinary.uploader.upload(file)
+            data = request.data
+            data["file"] = upload_result['secure_url']
+            data["file_id"] = upload_result["public_id"]
+            serializer = PostSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            except Exception:
-                return Response({'image': 'Please upload a valid image'}, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            print(serializer)
-            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-        
+        return Response({'error': 'No file provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
