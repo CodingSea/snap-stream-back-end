@@ -31,8 +31,9 @@ class UserView(APIView):
 class PostView(APIView):
     def get(self, request):
         posts = Post.objects.all()
+        print(posts)
         serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     # This code was mostly taken from the internet but it was changed to fit my model
     def post(self, request):
