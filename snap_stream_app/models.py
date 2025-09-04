@@ -28,6 +28,8 @@ class FollowRelation(models.Model):
 
 class Post(models.Model):
     caption = models.CharField(max_length=255)
+    file = models.CharField()
+    file_id = models.CharField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
@@ -49,12 +51,3 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'comment'
-
-
-class Content(models.Model):
-    file = models.CharField()
-    order = models.IntegerField()
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'content'

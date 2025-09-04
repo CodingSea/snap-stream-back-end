@@ -13,10 +13,21 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import cloudinary
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
+
+
+cloudinary.config( 
+  	cloud_name = os.getenv("CLOUD_NAME"),
+  	api_key = os.getenv("API_KEY"),
+  	api_secret = os.getenv("SECRET_KEY")
+)
+
+import cloudinary.uploader
+import cloudinary.api	
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,6 +54,7 @@ INSTALLED_APPS = [
     'snap_stream_app',
     'corsheaders',
     'rest_framework_simplejwt',
+    'cloudinary',
 ]
 
 AUTH_USER_MODEL = 'snap_stream_app.User'
