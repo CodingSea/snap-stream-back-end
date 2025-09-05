@@ -6,6 +6,7 @@ from .views import CustomTokenObtainPairView
 urlpatterns = [
     path('users/', views.UserView.as_view(), name="users"),
     path('signup/', views.SignupView.as_view(), name="signup"),
-    path('search/', views.PostView.as_view(), name="search"),
     path('post/new/', views.PostView.as_view(), name="post-create"),
+    path('search/', views.PostView.as_view(), name="search"),
+    path('search/<int:pk>', views.SinglePostView.as_view(), name="search-details"),
 ]
