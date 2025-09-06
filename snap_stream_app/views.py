@@ -75,8 +75,9 @@ class UserView(APIView):
 
 class PostView(APIView):
     def get(self, request):
-        posts = Post.objects.all()
+        posts = Post.objects.select_related("user").all()
         serializer = PostSerializer(posts, many=True)
+        print(posts[0].user.username)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     # This code was mostly taken from the internet but it was changed to fit my model
