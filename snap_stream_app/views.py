@@ -99,3 +99,10 @@ class SinglePostView(APIView):
         post = Post.objects.get(id=pk)
         serializer = PostReadSerializer(post, many=False)
         return Response(serializer.data, status.HTTP_200_OK)
+    
+
+class SingleUserView(APIView):
+    def get(self, request, id):
+        user = User.objects.get(id=id)
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
