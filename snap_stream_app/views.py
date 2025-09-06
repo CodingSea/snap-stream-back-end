@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User, FollowRelation, Post, Like, Comment
-from .serializers import UserSerializer, FollowRelationSerializer, PostSerializer, LikeSerializer, CommentSerializer
+from .serializers import UserSerializer, FollowRelationSerializer, PostReadSerializer, PostWriteSerializer, LikeSerializer, CommentSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
@@ -75,9 +75,8 @@ class UserView(APIView):
 
 class PostView(APIView):
     def get(self, request):
-        posts = Post.objects.select_related("user").all()
-        serializer = PostSerializer(posts, many=True)
-        print(posts[0].user.username)
+        posts = Post.objects.select_related("user").all().order_by().order_by('-created_at')
+        serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     # This code was mostly taken from the internet but it was changed to fit my model
@@ -88,7 +87,7 @@ class PostView(APIView):
             data = request.data
             data["file"] = upload_result['secure_url']
             data["file_id"] = upload_result["public_id"]
-            serializer = PostSerializer(data=data)
+            serializer = PostWriteSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -98,5 +97,5 @@ class PostView(APIView):
 class SinglePostView(APIView):
     def get(self, request, pk):
         post = Post.objects.get(id=pk)
-        serializer = PostSerializer(post, many=False)
+        serializer = PostReadSerializer(post, many=False)
         return Response(serializer.data, status.HTTP_200_OK)
