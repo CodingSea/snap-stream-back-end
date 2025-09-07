@@ -8,6 +8,7 @@ urlpatterns = [
     path('user/<int:id>', views.SingleUserView.as_view(), name="user"),
     path('signup/', views.SignupView.as_view(), name="signup"),
     path('post/new/', views.PostView.as_view(), name="post-create"),
+    path('post/<int:id>/', views.SinglePostView.as_view(), name="post-delete"),
     path('search/', views.PostView.as_view(), name="search"),
-    path('search/<int:pk>', views.SinglePostView.as_view(), name="search-details"),
+    path('search/<int:pk>/', views.SinglePostView.as_view(), name="search-details"),
 ]

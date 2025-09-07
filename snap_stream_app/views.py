@@ -77,7 +77,7 @@ class PostView(APIView):
     def get(self, request):
         posts = Post.objects.select_related("user").all().order_by().order_by('-created_at')
         serializer = PostReadSerializer(posts, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status.HTTP_200_OK)
     
     # This code was mostly taken from the internet but it was changed to fit my model
     def post(self, request):
@@ -91,7 +91,7 @@ class PostView(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response({'error': 'No file provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': 'No file provided.'}, status.HTTP_400_BAD_REQUEST)
     
 
 class SinglePostView(APIView):
@@ -99,6 +99,10 @@ class SinglePostView(APIView):
         post = Post.objects.get(id=pk)
         serializer = PostReadSerializer(post, many=False)
         return Response(serializer.data, status.HTTP_200_OK)
+    
+    def delete(self, request, id):
+        Post.objects.get(id=id).delete()
+        return Response(status.HTTP_200_OK)
     
 
 class SingleUserView(APIView):
