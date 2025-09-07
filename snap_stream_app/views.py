@@ -95,14 +95,24 @@ class PostView(APIView):
     
 
 class SinglePostView(APIView):
-    def get(self, request, pk):
-        post = Post.objects.get(id=pk)
+    def get(self, request, id):
+        post = Post.objects.get(id=id)
         serializer = PostReadSerializer(post, many=False)
         return Response(serializer.data, status.HTTP_200_OK)
     
     def delete(self, request, id):
         Post.objects.get(id=id).delete()
         return Response(status.HTTP_200_OK)
+    
+    def put(self, request, id):
+        post = Post.objects.get(id=id)
+        serializer = PostWriteSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            print(serializer.errors)
+        return Response(serializer.errors, status.HTTP_400_BAD_REQUEST)
     
 
 class SingleUserView(APIView):
