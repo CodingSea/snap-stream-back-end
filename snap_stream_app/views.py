@@ -92,7 +92,12 @@ class PostView(APIView):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response({'error': 'No file provided.'}, status.HTTP_400_BAD_REQUEST)
-    
+
+class ProfileView(APIView):
+    def get(self, request, id):
+        posts = Post.objects.select_related("user").filter(user = id).order_by().order_by('-created_at')
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data, status.HTTP_200_OK) 
 
 class SinglePostView(APIView):
     def get(self, request, id):

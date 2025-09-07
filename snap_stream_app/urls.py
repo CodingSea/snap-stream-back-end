@@ -11,4 +11,5 @@ urlpatterns = [
     path('search/', views.PostView.as_view(), name="search"),
     path('search/<int:id>/', views.SinglePostView.as_view(), name="search-details"),
     path('post/<int:id>/', views.SinglePostView.as_view(), name="post-delete"),
+    path('profile/<int:id>/', views.ProfileView.as_view()),
 ]
