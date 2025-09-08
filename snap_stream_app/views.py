@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import User, FollowRelation, Post, Like, Comment
-from .serializers import UserSerializer, FollowRelationSerializer, PostReadSerializer, PostWriteSerializer, LikeSerializer, CommentSerializer
+from .models import User, Post, Comment
+from .serializers import UserSerializer, PostReadSerializer, PostWriteSerializer, CommentSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
@@ -124,4 +124,22 @@ class SingleUserView(APIView):
     def get(self, request, id):
         user = User.objects.get(id=id)
         serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+
+class LikePostView(APIView):
+    def get(self, request, postId, userId):
+        post = Post.objects.get(id=postId)
+        user = User.objects.get(id=userId)
+
+        if user in post.likes.all():
+            post.likes.remove(userId)
+        else:
+            post.likes.add(userId)
+
+        print(post.likes.all())
+        
+        post.save()
+
+        serializer = PostReadSerializer(post, many=False)
         return Response(serializer.data, status.HTTP_200_OK)

@@ -7,6 +7,9 @@ class User(AbstractUser):
     description = models.CharField(max_length=255, blank=True, null=True)
     profile_image = models.CharField(null=True)
     profile_image_id = models.CharField(null=True)
+
+    follower_users = models.ManyToManyField('self', related_name='followers')
+    following_users = models.ManyToManyField('self', related_name='following')
     
     class RoleOptions(models.TextChoices):
         USER = "user", "User"
@@ -18,37 +21,27 @@ class User(AbstractUser):
         db_table = 'user'
 
 
-class FollowRelation(models.Model):
-    followed_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed_user')
-    following_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following_user')
-
-    class Meta:
-        db_table = 'follow_relation'
-
-
 class Post(models.Model):
     caption = models.CharField(max_length=255)
     file = models.CharField()
     file_id = models.CharField(null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
 
     class Meta:
         db_table = 'post'
+    
+    def number_of_likes(self):
+            return self.likes.count()
 
-
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = 'like'
 
 
 class Comment(models.Model):
     content = models.CharField
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'comment'

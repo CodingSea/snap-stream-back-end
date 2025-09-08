@@ -12,4 +12,5 @@ urlpatterns = [
     path('search/<int:id>/', views.SinglePostView.as_view(), name="search-details"),
     path('post/<int:id>/', views.SinglePostView.as_view(), name="post-delete"),
     path('profile/<int:id>/', views.ProfileView.as_view()),
+    path('post/<int:userId>/<int:postId>/like/', views.LikePostView.as_view(), name="post-like"),
 ]
