@@ -76,7 +76,7 @@ class UserView(APIView):
 
 class PostView(APIView):
     def get(self, request):
-        posts = Post.objects.select_related("user").all().order_by().order_by('-created_at')
+        posts = Post.objects.select_related("user").all().order_by('-created_at')
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
     
@@ -96,7 +96,7 @@ class PostView(APIView):
 
 class ProfileView(APIView):
     def get(self, request, id):
-        posts = Post.objects.select_related("user").filter(user = id).order_by().order_by('-created_at')
+        posts = Post.objects.select_related("user").filter(user = id).order_by('-created_at')
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK) 
 
@@ -148,8 +148,14 @@ class LikePostView(APIView):
 
 class SearchPostsView(APIView):
     def post(self, request):
-        search_text = request.POST.get('search_text', '')
+        search_text = request.data.get("search_text")
 
-        posts = Post.objects.filter(Q(caption_icontains=search_text))
+        print("Text", search_text)
+
+        if search_text is None:
+            posts = Post.objects.all().order_by('-created_at')
+        else:
+            posts = Post.objects.filter(Q(caption__icontains=search_text)).order_by('-created_at')
+        
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
