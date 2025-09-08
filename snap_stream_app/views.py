@@ -11,6 +11,7 @@ from rest_framework import status
 import cloudinary
 import cloudinary.uploader
 from random import randint
+from django.db.models import Q
 
 SALT=os.getenv("SALT")
 
@@ -142,4 +143,13 @@ class LikePostView(APIView):
         post.save()
 
         serializer = PostReadSerializer(post, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+class SearchPostsView(APIView):
+    def post(self, request):
+        search_text = request.POST.get('search_text', '')
+
+        posts = Post.objects.filter(Q(caption_icontains=search_text))
+        serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
