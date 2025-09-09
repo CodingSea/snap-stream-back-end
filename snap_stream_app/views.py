@@ -137,8 +137,6 @@ class LikePostView(APIView):
             post.likes.remove(userId)
         else:
             post.likes.add(userId)
-
-        print(post.likes.all())
         
         post.save()
 
@@ -150,12 +148,40 @@ class SearchPostsView(APIView):
     def post(self, request):
         search_text = request.data.get("search_text")
 
-        print("Text", search_text)
-
         if search_text is None:
             posts = Post.objects.all().order_by('-created_at')
         else:
             posts = Post.objects.filter(Q(caption__icontains=search_text)).order_by('-created_at')
+        
+        serializer = PostReadSerializer(posts, many=True)
+        return Response(serializer.data, status.HTTP_200_OK)
+    
+
+class FollowView(APIView):
+    def post(self, request, userId):
+        target_user = User.objects.get(id=userId)
+        userId = request.data.get("userId")
+        user = User.objects.get(id=userId)
+
+        if target_user in user.followings.all():
+            user.followings.remove(target_user.id)
+            target_user.followers.remove(user.id)
+        else:
+            user.followings.add(target_user.id)
+            target_user.followers.add(user.id)
+        
+        user.save()
+
+        serializer = UserSerializer(user, many=False)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+
+class HomeView(APIView):
+    def get(self, request, id):
+        user = User.objects.get(id=id)
+        posts = Post.objects.all()
+        
+        print("User followings: ",user.followings)
         
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)

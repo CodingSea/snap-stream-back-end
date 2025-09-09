@@ -14,4 +14,6 @@ urlpatterns = [
     path('profile/<int:id>/', views.ProfileView.as_view()),
     path('post/<int:userId>/<int:postId>/like/', views.LikePostView.as_view(), name="post-like"),
     path('search/find/', views.SearchPostsView.as_view(), name="search-text"),
+    path('user/follow/<int:userId>/', views.FollowView.as_view(), name="profile-follow"),
+    path('home/<int:id>/', views.HomeView.as_view(), name="home"),
 ]
