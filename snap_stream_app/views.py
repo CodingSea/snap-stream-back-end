@@ -179,9 +179,10 @@ class FollowView(APIView):
 class HomeView(APIView):
     def get(self, request, id):
         user = User.objects.get(id=id)
-        posts = Post.objects.all()
+        posts = Post.objects.filter(user__in = user.followings.all()).order_by('-created_at')
+
         
-        print("User followings: ",user.followings)
+        print("User followings: ",user.followings.all())
         
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
