@@ -18,4 +18,6 @@ urlpatterns = [
     path('home/<int:id>/', views.HomeView.as_view(), name="home"),
     path('post/<int:userId>/comment/', views.CommentView.as_view(), name="comment-post"),
     path('post/<int:postId>/comment-list/', views.CommentView.as_view(), name="list-post"),
+    path('user/<int:userId>/followings/', views.FollowingView.as_view()),
+    path('user/<int:userId>/followers/', views.FollowerView.as_view()),
 ]

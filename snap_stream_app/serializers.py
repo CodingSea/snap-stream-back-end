@@ -4,9 +4,14 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from cloudinary.templatetags import cloudinary
 
 class UserSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = '__all__'
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
 
     
 class PostReadSerializer(serializers.ModelSerializer):

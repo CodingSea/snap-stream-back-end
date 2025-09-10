@@ -199,3 +199,14 @@ class CommentView(APIView):
         
         return Response(serailzer.errors, status=400)
     
+class FollowingView(APIView):
+    def get(self, request, userId):
+        user = User.objects.get(id=userId)
+        serailzer = UserSerializer(user.followings.all(), many=True)
+        return Response(serailzer.data, status.HTTP_200_OK)
+
+class FollowerView(APIView):
+    def get(self, request, userId):
+        user = User.objects.get(id=userId)
+        serailzer = UserSerializer(user.followers, many=True)
+        return Response(serailzer.data, status.HTTP_200_OK)

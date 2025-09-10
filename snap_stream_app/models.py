@@ -8,7 +8,7 @@ class User(AbstractUser):
     profile_image = models.CharField(null=True)
     profile_image_id = models.CharField(null=True)
 
-    followings = models.ManyToManyField('self', related_name="following", symmetrical=False, blank=True)
+    followings = models.ManyToManyField('self', related_name="followers", symmetrical=False, blank=True)
     
     class RoleOptions(models.TextChoices):
         USER = "user", "User"
