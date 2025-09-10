@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import User, Post, Comment
-from .serializers import UserSerializer, PostReadSerializer, PostWriteSerializer, CommentSerializer
+from .serializers import UserSerializer, PostReadSerializer, PostWriteSerializer, CommentSerializer, CommentReadSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer
 from django.contrib.auth.hashers import make_password
@@ -180,9 +180,22 @@ class HomeView(APIView):
     def get(self, request, id):
         user = User.objects.get(id=id)
         posts = Post.objects.filter(user__in = user.followings.all()).order_by('-created_at')
-
-        
-        print("User followings: ",user.followings.all())
         
         serializer = PostReadSerializer(posts, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
+
+class CommentView(APIView):
+    def get(self, request, postId):
+        comments = Comment.objects.filter(post=postId).order_by("-created_at")
+        serailzer = CommentReadSerializer(comments, many=True)
+        return Response(serailzer.data, status.HTTP_200_OK)
+
+    def post(self, request, userId):
+        request.data["user"] = userId
+        serailzer = CommentSerializer(data=request.data)
+        if serailzer.is_valid():
+            serailzer.save()
+            return Response(serailzer.data, status=201)
+        
+        return Response(serailzer.errors, status=400)
+    

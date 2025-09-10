@@ -8,7 +8,6 @@ class User(AbstractUser):
     profile_image = models.CharField(null=True)
     profile_image_id = models.CharField(null=True)
 
-    followers = models.ManyToManyField('self', related_name="follower", symmetrical=False, blank=True)
     followings = models.ManyToManyField('self', related_name="following", symmetrical=False, blank=True)
     
     class RoleOptions(models.TextChoices):
@@ -38,7 +37,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    content = models.CharField
+    content = models.CharField(default="comment")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
