@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),  # Name of your PostgreSQL database
         'USER': 'postgres',
         'PASSWORD': os.getenv('PASSWORD'),
-        'HOST': 'localhost',  
+        'HOST': os.getenv('DB_URL').split('@')[1].split(':')[0],
         'PORT': '5432',
     }
 }
