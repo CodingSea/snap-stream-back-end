@@ -162,5 +162,5 @@ SIMPLE_JWT = {
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
-    os.getenv("ALLOWED_HOSTS"),
+    "https://snap-stream-website.netlify.app"
 ]
